@@ -1,0 +1,216 @@
+{
+  "run_id": "57b34e322076",
+  "timestamp_utc": "2026-10-19T08:24:20.509061+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "xingchen-agi/xing4.0-29b-a4b:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-10-19"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v1",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 400,
+    "timeout_s": 60.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "Meerut, India"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 0.4,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.4,
+        "exact_match_rate": 0.4,
+        "per_field": {
+          "invoice_number": 0.4,
+          "invoice_date": 0.4,
+          "vendor_name": 0.4,
+          "total_amount": 0.4,
+          "currency": 0.4
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 0.6667,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.6667,
+        "exact_match_rate": 0.6667,
+        "per_field": {
+          "invoice_number": 0.6667,
+          "invoice_date": 0.6667,
+          "vendor_name": 0.6667,
+          "total_amount": 0.6667,
+          "currency": 0.6667
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 1.0,
+      "failures": 0,
+      "errors": []
+    },
+    "latency_ms": {
+      "p50": 17422.3,
+      "p95": 22936.7,
+      "p99": 22936.7,
+      "mean": 16609.8,
+      "n": 5
+    },
+    "tokens": {
+      "avg_input": 183.2,
+      "avg_output": 400
+    },
+    "cost_usd": {
+      "avg_per_request": 0.0,
+      "total": 0.0
+    },
+    "for_catalog": {
+      "quality": 0.4,
+      "latency_p95_ms": 22936.7,
+      "reliability": 1.0
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Task: Extract structured data from an invoice.\n    *   Output format: ONLY a JSON object.\n    *   Required keys: `invoice_number` (string), `invoice_date` (string, YYYY-MM-DD), `vendor_name` (string), `total_amount` (number, final amount payable including tax), `currency` (ISO code like INR or USD).\n    *   Constraints: No explanation, no markdown.\n\n2.  **Analyze the Invoice Text:**\n    *   \"Bright Office Supplies\" -> Vendor Name\n    *   \"Bill INV-2024-0509\" -> Invoice Number\n    *   \"dated 8 April 2025\" -> Invoice Date (needs to be formatted as YYYY-MM-DD)\n    *   \"Amount before tax $35,572.85\" -> Amount before tax\n    *   \"Tax $3,557.28\" -> Tax amount\n    *   \"Please pay $39,130.13 within 15 days.\" -> Total amount payable (including tax)\n    *   \"$\" sign indicates USD currency.\n\n3.  **Extract and Format Data:**\n    *   `invoice_number`: \"INV-2024-0509\"\n    *   `invoice_date`: \"8 April 2025\" -> \"2025-04-08\"\n    *   `vendor_name`: \"Bright Office Supplies\"\n    *   `total_amount`: 39130.13 (number, not string)\n    *   `currency`: \"USD\"\n\n4.  **Construct",
+      "error": null,
+      "latency_ms": 17422.3,
+      "input_tokens": 156,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Task: Extract structured data from an invoice.\n    *   Output format: ONLY a JSON object.\n    *   Required keys: `invoice_number` (string), `invoice_date` (string, YYYYY-MM-DD), `vendor_name` (string), `total_amount` (number, final amount payable including tax), `currency` (ISO code like INR or USD).\n    *   Constraints: No explanation, no markdown.\n\n2.  **Extract Data from Invoice:**\n    *   `invoice_number`: \"INV-2024-5413\"\n    *   `invoice_date`: \"27/04/2024\" -> Format as YYYY-MM-DD -> \"2024-04-27\"\n    *   `vendor_name`: \"Apex Cloud Services\"\n    *   `total_amount`: \"Rs. 10,383.27\" -> Number -> 10383.27\n    *   `currency`: \"Rs.\" -> ISO code -> INR (Indian Rupees)\n\n3.  **Format Output:**\n    *   JSON object:\n        ```json\n        {\n          \"invoice_number\": \"INV-2024-5413\",\n          \"invoice_date\": \"2024-04-27\",\n          \"vendor_name\": \"Apex Cloud Services\",\n          \"total_amount\": 10383.27,\n          \"currency\": \"INR\"\n        }\n        ```\n\n4.  **Final Review against constraints:**\n    *   Only JSON? Yes.\n    *   No explanation? Yes.\n    *",
+      "error": null,
+      "latency_ms": 13199.1,
+      "input_tokens": 179,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Task: Extract structured data from an invoice.\n    *   Output format: ONLY a JSON object.\n    *   Required keys: `invoice_number` (string), `invoice_date` (string, Y-MM-DD), `vendor_name` (string), `total_amount` (number, final amount including tax), `currency` (ISO code like INR or USD).\n    *   Constraints: No explanation, no markdown.\n\n2.  **Extract Data from Invoice:**\n    *   `invoice_number`: \"INV-2024-4046\"\n    *   `invoice_date`: \"24 February 2024\" -> Format as YYYY-MM-DD -> \"2024-02-24\"\n    *   `vendor_name`: \"Bright Office Supplies\"\n    *   `total_amount`: \"$134,099.70\" -> Number -> 134099.70\n    *   `currency`: \"$\" -> ISO code USD\n\n3.  **Format Output:**\n    *   JSON object:\n        ```json\n        {\n          \"invoice_number\": \"INV-2024-4046\",\n          \"invoice_date\": \"2024-02-24\",\n          \"vendor_name\": \"Bright Office Supplies\",\n          \"total_amount\": 134099.70,\n          \"currency\": \"USD\"\n        }\n        ```\n\n4.  **Final Review against constraints:**\n    *   Only JSON? Yes.\n    *   Exactly those keys? Yes.\n    *   No explanation? Yes.\n    *   No mark",
+      "error": null,
+      "latency_ms": 21490.2,
+      "input_tokens": 176,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Input: An invoice in Hindi.\n    *   Task: Extract structured data from the invoice.\n    *   Output format: ONLY a JSON object with exactly these keys: `invoice_number` (string), `invoice_date` (string, YYYY-MM-DD), `vendor_name` (string), `total_amount` (number, final amount payable including tax), `currency` (ISO code like INR or USD).\n    *   Constraint: No explanation, no markdown.\n\n2.  **Extract Data from the Invoice:**\n    *   `invoice_number`: \"INV-2025-7679\"\n    *   `invoice_date`: \"15 फ़रवरी 2024\" -> Convert to YYYY-MM-DD format -> \"2024-02-15\"\n    *   `vendor_name`: \"मेट्रो प्रिंट हाउस\"\n    *   `total_amount`: \"₹2,38,547.79\" -> Remove ₹ and commas -> 238547.79 (Number)\n    *   `currency`: \"INR\" (Since it's Rupees)\n\n3.  **Format the Output:**\n    *   JSON format required.\n    *   Keys must match exactly: `invoice_number`, `invoice_date`, `vendor_name`, `total_amount`, `currency`.\n    *   `total_amount` must be a number (no quotes around the value).\n    *   `invoice_date` must be a string in YYYY-MM-DD format.\n\n4.  **Draft the JSON:**\n    ```json\n    {\n      \"invoice",
+      "error": null,
+      "latency_ms": 22936.7,
+      "input_tokens": 213,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Input: An invoice text in Hindi.\n    *   Task: Extract structured data from the invoice.\n    *   Output format: ONLY a JSON object with exactly these keys: `invoice_number` (string), `invoice_date` (string, YYYY-MM-DD), `vendor_name` (string), `total_amount` (number, final amount payable including tax), `currency` (ISO code like INR or USD).\n    *   Constraint: No explanation, no markdown.\n\n2.  **Analyze the Invoice Text:**\n    *   `ग्रीन वैली फूड्स` -> Vendor Name: Green Valley Foods\n    *   `बिल INV-2024-0252, तारीख 19 अक्बो 2025` -> Invoice Number: INV-2024-0252, Date: 19 October 2025 (Note: \"अक्बो\" is a typo for \"अक्ಷಬ್\" or just \"अक्ಭ\" but clearly means October).\n    *   `कर रहित राशि ₹2,49,027.23` -> Tax-free amount: ₹2,49,027.23\n    *   `कर ₹44,824.90` -> Tax: ₹44,824.90\n    *   `कृपया 15 दिन में ₹2,93,852.13 का भापन करें।` -> Total amount payable: ₹2,93,852.13\n\n3.  **Extract",
+      "error": null,
+      "latency_ms": 8000.7,
+      "input_tokens": 192,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    }
+  ]
+}

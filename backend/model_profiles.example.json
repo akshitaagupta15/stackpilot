@@ -1,0 +1,17 @@
+{
+  "_help": "Copy to model_profiles.json. One entry per benchmarked model, with facts from the model's OpenRouter page. slug must match benchmark_models.json exactly. Set free_tier true for :free models. For free models add pricing_override with the model's PAID or comparable price, otherwise cost looks like $0.",
+  "models": [
+    {
+      "slug": "company/model-name:free",
+      "provider": "company",
+      "name": "Model Name (free tier)",
+      "context_window": 32000,
+      "structured_output": true,
+      "regions": ["us"],
+      "languages": ["en", "hi"],
+      "data_policy": "may_train",
+      "free_tier": true,
+      "pricing_override": {"input_per_mtok": 0.0, "output_per_mtok": 0.0, "verified_on": "YYYY-MM-DD"}
+    }
+  ]
+}

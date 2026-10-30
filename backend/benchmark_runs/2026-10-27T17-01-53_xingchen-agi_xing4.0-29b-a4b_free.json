@@ -1,0 +1,225 @@
+{
+  "run_id": "77c0896d8135",
+  "timestamp_utc": "2026-10-27T17:01:53.208010+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "xingchen-agi/xing4.0-29b-a4b:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-10-19"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v1",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 800,
+    "timeout_s": 60.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "Meerut, India"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 0.2,
+        "clean_json_rate": 0.2,
+        "field_accuracy": 0.2,
+        "exact_match_rate": 0.2,
+        "per_field": {
+          "invoice_number": 0.2,
+          "invoice_date": 0.2,
+          "vendor_name": 0.2,
+          "total_amount": 0.2,
+          "currency": 0.2
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 0.3333,
+        "clean_json_rate": 0.3333,
+        "field_accuracy": 0.3333,
+        "exact_match_rate": 0.3333,
+        "per_field": {
+          "invoice_number": 0.3333,
+          "invoice_date": 0.3333,
+          "vendor_name": 0.3333,
+          "total_amount": 0.3333,
+          "currency": 0.3333
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 0.2,
+      "failures": 4,
+      "truncated": 0,
+      "errors": [
+        "API error: {'message': 'xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-li",
+        "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\""
+      ]
+    },
+    "latency_ms": {
+      "p50": 17650.9,
+      "p95": 17650.9,
+      "p99": 17650.9,
+      "mean": 17650.9,
+      "n": 1
+    },
+    "tokens": {
+      "avg_input": 179,
+      "avg_output": 615
+    },
+    "cost_usd": {
+      "avg_per_request": 0.0,
+      "total": 0.0
+    },
+    "for_catalog": {
+      "quality": 0.2,
+      "latency_p95_ms": 17650.9,
+      "reliability": 0.2
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "",
+      "error": "API error: {'message': 'xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integratio",
+      "finish_reason": null,
+      "latency_ms": 9680.6,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "{\"invoice_number\":\"INV-2024-5413\",\"invoice_date\":\"2024-04-27\",\"vendor_name\":\"Apex Cloud Services\",\"total_amount\":10383.27,\"currency\":\"INR\"}",
+      "error": null,
+      "finish_reason": "stop",
+      "latency_ms": 17650.9,
+      "input_tokens": 179,
+      "output_tokens": 615,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 4043.7,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 3847.3,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 2337.5,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    }
+  ]
+}

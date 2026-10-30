@@ -1,0 +1,225 @@
+{
+  "run_id": "225813cbcb1a",
+  "timestamp_utc": "2026-10-27T16:57:26.008678+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "xingchen-agi/xing4.0-29b-a4b:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-10-19"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v1",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 400,
+    "timeout_s": 60.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "Meerut, India"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 0.2,
+      "failures": 4,
+      "truncated": 1,
+      "errors": [
+        "API error: {'message': 'xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-li",
+        "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\""
+      ]
+    },
+    "latency_ms": {
+      "p50": 9524.1,
+      "p95": 9524.1,
+      "p99": 9524.1,
+      "mean": 9524.1,
+      "n": 1
+    },
+    "tokens": {
+      "avg_input": 192,
+      "avg_output": 400
+    },
+    "cost_usd": {
+      "avg_per_request": 0.0,
+      "total": 0.0
+    },
+    "for_catalog": {
+      "quality": 0.0,
+      "latency_p95_ms": 9524.1,
+      "reliability": 0.2
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "",
+      "error": "API error: {'message': 'xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integratio",
+      "finish_reason": null,
+      "latency_ms": 10126.6,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 2287.1,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 1953.4,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "",
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"xingchen-agi/xing4.0-29b-a4b:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumul",
+      "finish_reason": null,
+      "latency_ms": 1792.4,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "1.  **Analyze the Request:**\n    *   Task: Extract structured data from an invoice.\n    *   Output format: ONLY a JSON object.\n    *   Required keys: `invoice_number` (string), `invoice_date` (string, YYYY-MM-DD), `vendor_name` (string), `total_amount` (number, final amount payable including tax), `currency` (ISO code like INR or USD).\n    *   Constraint: No explanation, no markdown.\n\n2.  **Analyze the Input Data:**\n    *   \"ग्रीन वैली फूड्स\" -> Vendor Name: Green Valley Foods\n    *   \"बिल INV-2024-0252\" -> Invoice Number: INV-2024-0252\n    *   \"तारीख 19 अक्टूबर 2025\" -> Invoice Date: 19 October 2025 -> YYYY-MM-DD format: 2025-10-19\n    *   \"कर रहित राशि ₹2,49,027.23\" -> Tax-free amount: ₹2,49,027.23\n    *   \"कर ₹44,824.90\" -> Tax: ₹44,824.90\n    *   \"कृपया 15 दिन में ₹2,93,852.13 का भुगतान करें।\" -> Total amount payable including tax: ₹2,93,852.13\n    *   Currency: ₹ -> INR\n\n3.  **Construct the JSON Object:**\n    *   `invoice",
+      "error": null,
+      "finish_reason": "length",
+      "latency_ms": 9524.1,
+      "input_tokens": 192,
+      "output_tokens": 400,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    }
+  ]
+}

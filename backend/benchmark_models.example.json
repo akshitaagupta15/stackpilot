@@ -1,0 +1,8 @@
+{
+  "_help": "Copy this file to benchmark_models.json. For each model: copy the exact slug and the per-1M-token prices from https://openrouter.ai/models and set pricing_checked_on to today's date.",
+  "models": [
+    {"slug": "REPLACE_WITH_CHEAP_MODEL_SLUG",  "price_input_per_mtok": 0.0, "price_output_per_mtok": 0.0, "pricing_checked_on": "YYYY-MM-DD"},
+    {"slug": "REPLACE_WITH_MID_MODEL_SLUG",    "price_input_per_mtok": 0.0, "price_output_per_mtok": 0.0, "pricing_checked_on": "YYYY-MM-DD"},
+    {"slug": "REPLACE_WITH_STRONG_MODEL_SLUG", "price_input_per_mtok": 0.0, "price_output_per_mtok": 0.0, "pricing_checked_on": "YYYY-MM-DD"}
+  ]
+}
