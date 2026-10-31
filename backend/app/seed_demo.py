@@ -3,18 +3,21 @@ Run:  python -m app.seed_demo --reset
 Everything it writes is flagged simulated=True and says 'seeded demo data' in routing_reason."""
 import argparse
 import hashlib
+import os
 import math
 import random
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import delete
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
-from .db import ApiKey, RequestLog, get_engine
+from .db import ApiKey, Policy, RequestLog, get_engine
+from .monitoring import utc
 
 PROJECT = "demo"
+SEED_REASON = "seeded demo data"
 # model: (median latency ms, failure probability, $ per 1M input, $ per 1M output)
 MODELS = {"demo/quality-large": (1500, 0.04, 3.0, 15.0), "demo/fast-small": (600, 0.01, 0.25, 1.25),
           "demo/backup-open": (1100, 0.02, 0.6, 0.8)}
@@ -57,10 +60,39 @@ def seed(session: Session, n: int = 600, now: datetime | None = None, rng_seed: 
             policy_name="default", served_model=served, attempts=attempts, success=served is not None,
             fallback_used=served is not None and served != primary, simulated=True, latency_ms=lat,
             total_ms=round(ok_total, 1), input_tokens=tin if served else None, output_tokens=tout if served else None,
-            cost_usd=cost, routing_reason="seeded demo data"))
+            cost_usd=cost, routing_reason=SEED_REASON))
     session.add_all(rows)
     session.commit()
     return len(rows)
+
+
+def ensure_demo(session: Session, n: int = 4000, max_age_hours: float = 12, viewer_key: str | None = None,
+                now: datetime | None = None) -> dict:
+    """Idempotent startup helper: (re)seed only when seeded data is missing or stale, so the public
+    demo never looks empty. Only rows marked as seeded are replaced; other demo-project rows survive."""
+    now = now or datetime.now(timezone.utc)
+    newest = session.scalar(select(func.max(RequestLog.created_at))
+                            .where(RequestLog.project == PROJECT, RequestLog.routing_reason == SEED_REASON))
+    seeded = 0
+    if newest is None or utc(newest) < now - timedelta(hours=max_age_hours):
+        session.execute(delete(RequestLog).where(RequestLog.project == PROJECT, RequestLog.routing_reason == SEED_REASON))
+        seeded = seed(session, n, now)
+    # A ready-made policy so the public "try the gateway" demo works with no setup. It needs the
+    # demo/fail-model and demo/backup entries in model_profiles.json (see model_profiles.demo.json).
+    cfg = {"primary": "demo/fail-model", "fallbacks": ["demo/backup"], "data_sensitivity": "low",
+           "regions": [], "require_structured_output": False, "max_tokens": 400}
+    pol = session.scalar(select(Policy).where(Policy.project == PROJECT, Policy.name == "default"))
+    if pol is None:
+        session.add(Policy(project=PROJECT, name="default", config=cfg))
+        session.commit()
+    key_created = False
+    if viewer_key:
+        h = hashlib.sha256(viewer_key.encode()).hexdigest()
+        if session.scalar(select(ApiKey).where(ApiKey.key_hash == h)) is None:
+            session.add(ApiKey(name="demo-viewer", project=PROJECT, key_hash=h))
+            session.commit()
+            key_created = True
+    return {"seeded": seeded, "key_created": key_created}
 
 
 def main():
@@ -76,7 +108,7 @@ def main():
         count = seed(s, a.n)
         key = None
         if not s.query(ApiKey).filter(ApiKey.project == PROJECT).first():
-            key = "sp_demo_" + secrets.token_urlsafe(16)
+            key = os.environ.get("DEMO_VIEWER_KEY") or "sp_demo_" + secrets.token_urlsafe(16)
             s.add(ApiKey(name="demo-viewer", project=PROJECT, key_hash=hashlib.sha256(key.encode()).hexdigest()))
             s.commit()
     print(f"seeded {count} simulated requests for project '{PROJECT}'")

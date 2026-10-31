@@ -1,0 +1,27 @@
+# Local full stack: Postgres + backend.   Usage:  copy .env.example .env   then   docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: stackpilot
+      POSTGRES_PASSWORD: stackpilot   # local development only
+      POSTGRES_DB: stackpilot
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stackpilot"]
+      interval: 5s
+      retries: 10
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://stackpilot:stackpilot@db:5432/stackpilot
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?create a .env file (copy .env.example) and set ADMIN_TOKEN}
+      DEMO_MODE: "1"
+      SEED_DEMO_ON_START: "1"
+      DEMO_VIEWER_KEY: ${DEMO_VIEWER_KEY:-sp_demo_local_viewer_key}
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  pgdata: {}

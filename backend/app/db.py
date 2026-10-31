@@ -57,15 +57,24 @@ class RequestLog(Base):
     routing_reason: Mapped[str] = mapped_column(String(500))
 
 
+def normalize_url(url: str) -> str:
+    """Hosting providers hand out postgres:// or postgresql:// URLs; we use the psycopg 3 driver."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix):]
+    return url
+
+
 def database_url() -> str:
-    url = os.environ.get("DATABASE_URL", "sqlite:///./stackpilot.db")
-    return url.replace("postgres://", "postgresql://", 1) if url.startswith("postgres://") else url
+    return normalize_url(os.environ.get("DATABASE_URL", "sqlite:///./stackpilot.db"))
 
 
 @lru_cache
 def get_engine():
     url = database_url()
-    kwargs = {"connect_args": {"check_same_thread": False}} if url.startswith("sqlite") else {}
+    # pre_ping/recycle: serverless Postgres (e.g. Neon) drops idle connections
+    kwargs = ({"connect_args": {"check_same_thread": False}} if url.startswith("sqlite")
+              else {"pool_pre_ping": True, "pool_recycle": 300})
     engine = create_engine(url, **kwargs)
     Base.metadata.create_all(engine)
     return engine
