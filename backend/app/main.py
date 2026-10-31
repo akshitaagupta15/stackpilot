@@ -4,12 +4,14 @@ from .catalog import load_catalog
 from .cost import estimate_cost
 from .gateway_api import admin_router, gateway_router
 from .measured_api import router as measured_router
+from .monitor_api import router as monitor_router
 from .recommend import recommend
 from .schemas import CostEstimate, ModelSpec, Recommendation, Weights, Workload
 
-app = FastAPI(title="StackPilot", version="0.2.0")
+app = FastAPI(title="StackPilot", version="0.3.0")
 app.include_router(measured_router)
 app.include_router(gateway_router)
+app.include_router(monitor_router)
 app.include_router(admin_router)
 
 

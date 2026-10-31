@@ -1,19 +1,22 @@
 import hashlib
 import hmac
+import math
 import os
 import secrets
 import uuid
+from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Response
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from . import measured
 from .db import ApiKey, Policy, RequestLog, get_db
 from .gateway import compatibility_problems, route
 from .providers import Provider, get_provider
+from .ratelimit import limiter
 
 gateway_router = APIRouter(prefix="/gateway", tags=["gateway"])
 admin_router = APIRouter(prefix="/admin", tags=["admin"])
@@ -90,6 +93,18 @@ def chat(req: ChatRequest, response: Response, x_api_key: str | None = Header(de
     if key is None:
         raise HTTPException(401, "invalid API key")
     key_id, project = key.id, key.project
+    per_min = int(os.environ.get("RATE_LIMIT_PER_MIN", "30"))
+    wait = limiter.check(key_id, per_min)
+    if wait:
+        raise HTTPException(429, f"rate limit exceeded: {per_min} requests per minute",
+                            headers={"Retry-After": str(math.ceil(wait))})
+    daily = int(os.environ.get("DAILY_LIMIT", "1000"))
+    if daily > 0:
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        used = db.scalar(select(func.count()).select_from(RequestLog)
+                         .where(RequestLog.api_key_id == key_id, RequestLog.created_at >= today))
+        if used >= daily:
+            raise HTTPException(429, f"daily limit of {daily} requests reached for this API key")
     pol = db.scalar(select(Policy).where(Policy.project == project, Policy.name == req.policy))
     if pol is None:
         raise HTTPException(404, f"policy '{req.policy}' not found for this project")

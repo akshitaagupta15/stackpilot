@@ -143,3 +143,25 @@ def test_simulator_used_without_provider_key(monkeypatch):
     assert p.call("demo/ok", [{"role": "user", "content": "x"}], 10)["error"] is None
     monkeypatch.setenv("OPENROUTER_API_KEY", "k"); monkeypatch.setenv("DEMO_MODE", "1")
     assert real_get_provider().simulated
+
+
+def test_per_minute_rate_limit(env, monkeypatch):
+    monkeypatch.setenv("RATE_LIMIT_PER_MIN", "2")
+    c = env["client"]
+    key, _ = setup_project(c)
+    assert chat(c, key).status_code == 200 and chat(c, key).status_code == 200
+    r = chat(c, key)
+    assert r.status_code == 429 and int(r.headers["retry-after"]) >= 1
+    assert len(env["calls"]) == 2          # the blocked request never reached the provider
+    monkeypatch.setenv("RATE_LIMIT_PER_MIN", "0")   # 0 disables
+    assert chat(c, key).status_code == 200
+
+
+def test_daily_limit_counts_logged_requests(env, monkeypatch):
+    monkeypatch.setenv("DAILY_LIMIT", "2")
+    monkeypatch.setenv("RATE_LIMIT_PER_MIN", "0")
+    c = env["client"]
+    key, _ = setup_project(c)
+    chat(c, key); chat(c, key)
+    r = chat(c, key)
+    assert r.status_code == 429 and "daily" in r.json()["detail"] and len(env["calls"]) == 2
