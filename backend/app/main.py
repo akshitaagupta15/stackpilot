@@ -2,16 +2,25 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from .catalog import load_catalog
 from .cost import estimate_cost
+from .gateway_api import admin_router, gateway_router
+from .measured_api import router as measured_router
 from .recommend import recommend
 from .schemas import CostEstimate, ModelSpec, Recommendation, Weights, Workload
-from .measured_api import router as measured_router
-app = FastAPI(title="StackPilot", version="0.1.0")
+
+app = FastAPI(title="StackPilot", version="0.2.0")
 app.include_router(measured_router)
+app.include_router(gateway_router)
+app.include_router(admin_router)
 
 
 class RecommendRequest(BaseModel):
     workload: Workload
     weights: Weights | None = None
+
+
+@app.get("/")
+def root():
+    return {"name": "StackPilot", "docs": "/docs", "health": "/health"}
 
 
 @app.get("/health")

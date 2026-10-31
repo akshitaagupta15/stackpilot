@@ -1,0 +1,11 @@
+{
+  "_help": "DEMO profiles for trying the gateway locally. With no OPENROUTER_API_KEY the gateway uses a simulator in which any slug containing 'fail' is 'down' - so demo/fail-model always fails and demo/backup takes over.",
+  "models": [
+    {"slug": "demo/fail-model", "provider": "demo", "name": "Demo (always fails)", "context_window": 32000,
+     "structured_output": true, "regions": ["us"], "languages": ["en", "hi"], "data_policy": "no_training",
+     "pricing_override": {"input_per_mtok": 1.0, "output_per_mtok": 2.0, "verified_on": "2026-10-27"}},
+    {"slug": "demo/backup", "provider": "demo", "name": "Demo backup", "context_window": 32000,
+     "structured_output": true, "regions": ["us"], "languages": ["en", "hi"], "data_policy": "no_training",
+     "pricing_override": {"input_per_mtok": 0.5, "output_per_mtok": 1.0, "verified_on": "2026-10-27"}}
+  ]
+}
