@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from .account_api import account_router, auth_router
 from .catalog import load_catalog
 from .cost import estimate_cost
 from .db import get_db, get_engine
@@ -34,14 +35,17 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="StackPilot", version="0.4.0", lifespan=lifespan)
+app = FastAPI(title="StackPilot", version="0.5.0", lifespan=lifespan)
 origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST", "OPTIONS"],
-                   allow_headers=["Content-Type", "X-API-Key", "X-Admin-Token"])
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True,
+                   allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+                   allow_headers=["Content-Type", "X-API-Key", "X-Admin-Token", "X-Requested-With"])
 app.include_router(measured_router)
 app.include_router(gateway_router)
 app.include_router(monitor_router)
 app.include_router(admin_router)
+app.include_router(auth_router)
+app.include_router(account_router)
 
 
 class RecommendRequest(BaseModel):

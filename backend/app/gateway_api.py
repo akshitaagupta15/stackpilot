@@ -39,8 +39,7 @@ class KeyIn(BaseModel):
     project: str = Field(min_length=1, max_length=100)
 
 
-class PolicyIn(BaseModel):
-    project: str = Field(min_length=1, max_length=100)
+class PolicyBody(BaseModel):
     name: str = Field(default="default", min_length=1, max_length=100)
     primary: str
     fallbacks: list[str] = []
@@ -48,6 +47,10 @@ class PolicyIn(BaseModel):
     regions: list[str] = []
     require_structured_output: bool = False
     max_tokens: int = Field(default=800, ge=1, le=4000)
+
+
+class PolicyIn(PolicyBody):
+    project: str = Field(min_length=1, max_length=100)
 
 
 class Message(BaseModel):
@@ -68,21 +71,27 @@ def create_key(body: KeyIn, db: Session = Depends(get_db)):
     return {"api_key": plain, "project": body.project, "note": "Shown once. Only its hash is stored."}
 
 
-@admin_router.post("/policies", dependencies=[Depends(require_admin)])
-def upsert_policy(body: PolicyIn, db: Session = Depends(get_db)):
+def save_policy(db: Session, project: str, body: PolicyBody) -> dict:
+    """Validate every listed model against the policy's own constraints, then create or update it."""
     profiles = measured.load_profiles(measured.DEFAULT_PROFILES)
-    cfg = body.model_dump(exclude={"project", "name"})
+    cfg = body.model_dump(exclude={"name"})
     problems = {m: p for m in [body.primary, *body.fallbacks]
                 if (p := compatibility_problems(profiles.get(m), cfg))}
     if problems:
         raise HTTPException(422, detail={"message": "policy lists models that violate its own constraints",
                                          "problems": problems})
-    row = db.scalar(select(Policy).where(Policy.project == body.project, Policy.name == body.name))
+    row = db.scalar(select(Policy).where(Policy.project == project, Policy.name == body.name))
     if row:
         row.config = cfg
     else:
-        db.add(Policy(project=body.project, name=body.name, config=cfg))
+        db.add(Policy(project=project, name=body.name, config=cfg))
     db.commit()
+    return cfg
+
+
+@admin_router.post("/policies", dependencies=[Depends(require_admin)])
+def upsert_policy(body: PolicyIn, db: Session = Depends(get_db)):
+    cfg = save_policy(db, body.project, body)
     return {"project": body.project, "name": body.name, "config": cfg}
 
 

@@ -18,6 +18,14 @@ cd backend
 pip install -r requirements.txt
 python -m pytest -q
 uvicorn app.main:app --reload     # docs at http://localhost:8000/docs
+
+Live Backend API
+
+Live API (demo, simulated data): https://stackpilot-b9fp.onrender.com/ready
+
+Note: The free instance sleeps when idle, so the first request can take a while.
+
+All dashboard data in the public demo is simulated and labelled as such.
 ```
 
 ## Important limitations

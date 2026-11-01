@@ -4,43 +4,50 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import monitoring
-from .db import ApiKey, RequestLog, get_db
+from .auth import COOKIE_NAME, resolve_session
+from .db import ApiKey, Project, RequestLog, get_db
 
 router = APIRouter(prefix="/monitor", tags=["monitoring"])
 MAX_ROWS = 50_000
 
 
 def get_scope(x_admin_token: str | None = Header(default=None), x_api_key: str | None = Header(default=None),
+              sp_session: str | None = Cookie(default=None, alias=COOKIE_NAME),
               db: Session = Depends(get_db)) -> dict:
-    """Admin sees every project; an API key sees only its own project."""
+    """Admin sees everything; an API key sees its project; a logged-in user sees their own projects."""
     expected = os.environ.get("ADMIN_TOKEN")
     if x_admin_token and expected and hmac.compare_digest(x_admin_token, expected):
-        return {"admin": True, "project": None}
+        return {"admin": True, "projects": None}
     if x_api_key:
         h = hashlib.sha256(x_api_key.encode()).hexdigest()
         key = db.scalar(select(ApiKey).where(ApiKey.key_hash == h, ApiKey.active == True))  # noqa: E712
         if key:
-            return {"admin": False, "project": key.project}
-    raise HTTPException(401, "provide a valid X-Admin-Token or X-API-Key")
+            return {"admin": False, "projects": {key.project}}
+    user = resolve_session(db, sp_session)
+    if user:
+        slugs = db.scalars(select(Project.slug).where(Project.owner_id == user.id))
+        return {"admin": False, "projects": set(slugs)}
+    raise HTTPException(401, "log in, or provide a valid X-Admin-Token or X-API-Key")
 
 
 def load(db: Session, scope: dict, project: str | None, hours: int):
     if scope["admin"]:
-        proj = project
+        projs = {project} if project else None
     else:
-        if project and project != scope["project"]:
-            raise HTTPException(403, "this API key can only view its own project")
-        proj = scope["project"]
+        if project and project not in scope["projects"]:
+            raise HTTPException(403, "you can only view your own projects")
+        projs = {project} if project else scope["projects"]
+    proj = next(iter(projs)) if projs and len(projs) == 1 else None
     until = datetime.now(timezone.utc)
     since = until - timedelta(hours=hours)
     q = select(RequestLog).where(RequestLog.created_at >= since)
-    if proj:
-        q = q.where(RequestLog.project == proj)
+    if projs is not None:
+        q = q.where(RequestLog.project.in_(projs))
     rows = list(db.scalars(q.order_by(RequestLog.created_at.desc()).limit(MAX_ROWS)))
     return rows, since, until, proj
 

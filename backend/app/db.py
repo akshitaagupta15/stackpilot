@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timezone
 from functools import lru_cache
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, Integer, String, UniqueConstraint, create_engine
+from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 
@@ -13,6 +13,35 @@ def now() -> datetime:
 
 class Base(DeclarativeBase):
     pass
+
+
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255))     # argon2id, never the password
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class SessionRow(Base):
+    """Server-side login sessions: logging out really invalidates them. Only a hash of the cookie value is stored."""
+    __tablename__ = "sessions"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class Project(Base):
+    """A user's project. `slug` is the string used by ApiKey/Policy/RequestLog.project."""
+    __tablename__ = "projects"
+    __table_args__ = (UniqueConstraint("owner_id", "name"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(String(60))
+    slug: Mapped[str] = mapped_column(String(100), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
 class ApiKey(Base):

@@ -46,3 +46,13 @@ entries from `model_profiles.demo.json` to be present in `model_profiles.json`.
 - Tables are created at startup with `create_all`; there are no migrations yet (add Alembic before changing the schema in production).
 - Monitoring aggregates up to 50,000 rows in Python; move to SQL aggregation for larger volumes.
 - All dashboard data in the demo is simulated and labelled as such.
+
+## Accounts (sign-up / login)
+- Passwords are hashed with argon2id; login sessions are stored server-side and sent as an `HttpOnly`,
+  `Secure`, `SameSite=Lax` cookie (`sp_session`, 7 days). Logging out deletes the session row.
+- State-changing account routes require the header `X-Requested-With: stackpilot` (CSRF defence).
+- Environment: `COOKIE_SECURE` (default on; set `0` only for local plain-http development).
+- Limits: 3 projects per user, 5 active API keys and 5 policies per project; sign-up and login are rate limited.
+- Known gaps: emails are not verified, there is no password reset, no account deletion, and the rate limiter
+  trusts `X-Forwarded-For` and lives in process memory.
+- New tables (`users`, `sessions`, `projects`) are created automatically on first start. Existing tables are not altered.

@@ -65,3 +65,20 @@ def test_monitoring_on_postgres(pg):
     pts = c.get("/monitor/timeseries?hours=168&bucket=day", headers=ADMIN).json()["points"]
     assert sum(p["requests"] for p in pts) == 300
     assert c.get("/ready").json()["database"] == "ok"
+
+
+def test_accounts_flow_on_postgres(pg, monkeypatch):
+    monkeypatch.setenv("COOKIE_SECURE", "0")
+    H = {"X-Requested-With": "stackpilot"}
+    c = pg["c"]
+    assert c.post("/auth/signup", json={"email": "pg@example.com", "password": "correct horse battery"}, headers=H).status_code == 200
+    assert c.get("/auth/me").json()["email"] == "pg@example.com"          # session lookup with timezone-aware expiry
+    assert c.post("/auth/signup", json={"email": "PG@example.com", "password": "correct horse battery"}, headers=H).status_code == 409
+    pid = c.post("/account/projects", json={"name": "Shop"}, headers=H).json()["id"]
+    assert c.post(f"/account/projects/{pid}/policies", json={"primary": "demo/fail-model", "fallbacks": ["demo/backup"]}, headers=H).status_code == 200
+    key = c.post(f"/account/projects/{pid}/keys", json={"name": "k"}, headers=H).json()["api_key"]
+    r = TestClient(app).post("/gateway/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers={"X-API-Key": key})
+    assert r.status_code == 200 and r.json()["fallback_used"]
+    assert c.get("/monitor/summary?hours=24").json()["summary"]["requests"] == 1
+    c.post("/auth/logout", headers=H)
+    assert c.get("/auth/me").status_code == 401
