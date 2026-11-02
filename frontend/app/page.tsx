@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api, errorText } from "@/lib/api";
 import { pct, usd } from "@/lib/fmt";
 import type { CostEstimate, Recommendation, Weights, Workload } from "@/lib/types";
+import { useAuth } from "@/components/AuthProvider";
 import { Badge, Card, Notice, Table } from "@/components/ui";
 
 const PICKS: [string, string][] = [["best_overall", "Best overall"], ["cheapest", "Cheapest"],
@@ -13,6 +14,7 @@ const DEFAULTS = { name: "support assistant", requests: "80000", tin: "1500", to
 const W0: Weights = { quality: 0.4, cost: 0.25, latency: 0.2, reliability: 0.15 };
 
 export default function RecommendPage() {
+  const { user, ready } = useAuth();
   const [f, setF] = useState(DEFAULTS);
   const [w, setW] = useState<Weights>(W0);
   const [source, setSource] = useState<"illustrative" | "measured">("illustrative");
@@ -97,6 +99,8 @@ export default function RecommendPage() {
       </div>
 
       <div className="space-y-4">
+        {ready && !user && <Notice tone="blue">Want to route your own requests? <Link href="/signup" className="font-medium underline">Create an account</Link> to
+          make a project, API keys and routing policies, and see your own usage.</Notice>}
         {err && (
           <Notice tone="red">
             {err.replace(" See ignored_runs for why.", "")}

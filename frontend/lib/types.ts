@@ -43,3 +43,15 @@ export type RecentRequest = {
   request_id: string; time: string; served_model: string | null; success: boolean;
   fallback_used: boolean; latency_ms: number | null; cost_usd: number | null; reason: string;
 };
+
+export type User = { id: number; email: string };
+export type Project = { id: number; name: string; slug: string; created_at: string | null };
+export type KeyRow = { id: number; name: string; active: boolean; created_at: string };
+export type PolicyConfig = {
+  primary: string; fallbacks: string[]; data_sensitivity: "low" | "high"; regions: string[];
+  require_structured_output: boolean; max_tokens: number;
+};
+export type ProjectDetail = Project & { keys: KeyRow[]; policies: { name: string; config: PolicyConfig }[] };
+export type ModelProfile = {
+  slug: string; provider: string; regions: string[]; data_policy: string; structured_output: boolean; free_tier: boolean;
+};

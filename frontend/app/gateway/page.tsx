@@ -9,6 +9,8 @@ const TONE = { ok: "green", failed: "red", skipped: "gray" } as const;
 
 export default function GatewayPage() {
   const [text, setText] = useState("Summarise this invoice in one line.");
+  const [apiKey, setApiKey] = useState("");
+  const [policy, setPolicy] = useState("default");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [res, setRes] = useState<GatewayResult | null>(null);
@@ -16,7 +18,7 @@ export default function GatewayPage() {
   async function send() {
     setBusy(true); setErr(null); setRes(null);
     try {
-      setRes(await api<GatewayResult>("/gateway/chat", { key: true, body: { messages: [{ role: "user", content: text }] } }));
+      setRes(await api<GatewayResult>("/gateway/chat", { key: apiKey.trim() || true, body: { policy: policy.trim() || "default", messages: [{ role: "user", content: text }] } }));
     } catch (e) { setErr(errorText(e)); } finally { setBusy(false); }
   }
 
@@ -26,8 +28,12 @@ export default function GatewayPage() {
         <h1 className="text-lg font-semibold">Gateway playground</h1>
         <Notice tone="blue">The demo policy is deliberately set up so the primary model (<code>demo/fail-model</code>) always fails
           in the simulator. Watch the gateway fall back to <code>demo/backup</code>. No real model is called and nothing costs money.</Notice>
-        {!DEMO_KEY && <Notice tone="amber">NEXT_PUBLIC_DEMO_KEY is not set, so requests will be rejected. See .env.local.example.</Notice>}
+        {!DEMO_KEY && !apiKey && <Notice tone="amber">NEXT_PUBLIC_DEMO_KEY is not set, so requests will be rejected. See .env.local.example.</Notice>}
         <Card>
+          <div className="mb-3 grid grid-cols-2 gap-3">
+            <div><label>Your API key (optional)</label><input type="password" autoComplete="off" placeholder="blank = public demo key" value={apiKey} onChange={(e) => setApiKey(e.target.value)} /></div>
+            <div><label>Policy name</label><input value={policy} onChange={(e) => setPolicy(e.target.value)} /></div>
+          </div>
           <label>Message</label>
           <textarea rows={4} value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} />
           <button onClick={send} disabled={busy || !text.trim()}
