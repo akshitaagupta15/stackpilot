@@ -1,0 +1,230 @@
+{
+  "run_id": "a1a50a359234",
+  "timestamp_utc": "2026-11-02T16:03:01.294377+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-11-02"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v2",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 800,
+    "timeout_s": 60.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "India, home wifi"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 0.0,
+      "failures": 5,
+      "truncated": 0,
+      "retries": 0,
+      "errors": [
+        "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}"
+      ]
+    },
+    "latency_ms": {
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "mean": null,
+      "n": 0
+    },
+    "tokens": {
+      "avg_input": null,
+      "avg_output": null
+    },
+    "cost_usd": {
+      "avg_per_request": null,
+      "total": null
+    },
+    "for_catalog": {
+      "quality": 0.0,
+      "latency_p95_ms": null,
+      "reliability": 0.0
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 1900.6,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 539.5,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "",
+      "error": "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 97.8,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "",
+      "error": "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 2412.9,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "",
+      "error": "HTTP 401: {\"error\":{\"message\":\"Missing Authentication header\",\"code\":401}}",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 305.0,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    }
+  ]
+}

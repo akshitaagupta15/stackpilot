@@ -1,0 +1,230 @@
+{
+  "run_id": "b9364c6e0de4",
+  "timestamp_utc": "2026-11-02T14:54:37.404808+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-11-02"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v1",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 800,
+    "timeout_s": 60.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "India, home wifi"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 0.4,
+        "clean_json_rate": 0.4,
+        "field_accuracy": 0.4,
+        "exact_match_rate": 0.4,
+        "per_field": {
+          "invoice_number": 0.4,
+          "invoice_date": 0.4,
+          "vendor_name": 0.4,
+          "total_amount": 0.4,
+          "currency": 0.4
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 0.6667,
+        "clean_json_rate": 0.6667,
+        "field_accuracy": 0.6667,
+        "exact_match_rate": 0.6667,
+        "per_field": {
+          "invoice_number": 0.6667,
+          "invoice_date": 0.6667,
+          "vendor_name": 0.6667,
+          "total_amount": 0.6667,
+          "currency": 0.6667
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 0,
+        "clean_json_rate": 0,
+        "field_accuracy": 0.0,
+        "exact_match_rate": 0,
+        "per_field": {
+          "invoice_number": 0,
+          "invoice_date": 0,
+          "vendor_name": 0,
+          "total_amount": 0,
+          "currency": 0
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 0.8,
+      "failures": 1,
+      "truncated": 2,
+      "retries": 0,
+      "errors": [
+        "timeout"
+      ]
+    },
+    "latency_ms": {
+      "p50": 12477.7,
+      "p95": 51362.6,
+      "p99": 51362.6,
+      "mean": 24254.1,
+      "n": 4
+    },
+    "tokens": {
+      "avg_input": 183.2,
+      "avg_output": 751
+    },
+    "cost_usd": {
+      "avg_per_request": 0.0,
+      "total": 0.0
+    },
+    "for_catalog": {
+      "quality": 0.4,
+      "latency_p95_ms": 51362.6,
+      "reliability": 0.8
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "{\n  \"invoice_number\": \"INV-2024-0509\",\n  \"invoice_date\": \"2025-04-08\",\n  \"vendor_name\": \"Bright Office Supplies\",\n  \"total_amount\": 39130.13,\n  \"currency\": \"USD\"\n}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 12477.7,
+      "input_tokens": 159,
+      "output_tokens": 733,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "{\"invoice_number\": \"INV-2024-5413\", \"invoice_date\": \"2024-04-27\", \"vendor_name\": \"Apex Cloud Services\", \"total_amount\": 10383.27, \"currency\": \"INR\"}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 12109.0,
+      "input_tokens": 183,
+      "output_tokens": 671,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "",
+      "error": "timeout",
+      "finish_reason": null,
+      "retries": 0,
+      "latency_ms": 60016.6,
+      "input_tokens": null,
+      "output_tokens": null,
+      "cost_usd": null,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "",
+      "error": null,
+      "finish_reason": "length",
+      "retries": 0,
+      "latency_ms": 51362.6,
+      "input_tokens": 204,
+      "output_tokens": 800,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "",
+      "error": null,
+      "finish_reason": "length",
+      "retries": 0,
+      "latency_ms": 21067.0,
+      "input_tokens": 187,
+      "output_tokens": 800,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": false,
+        "clean_json": false,
+        "fields": {
+          "invoice_number": false,
+          "invoice_date": false,
+          "vendor_name": false,
+          "total_amount": false,
+          "currency": false
+        },
+        "field_accuracy": 0.0,
+        "exact_match": false
+      }
+    }
+  ]
+}

@@ -88,6 +88,11 @@ def recommend(w: Workload, models: list[ModelSpec], weights: Weights | None = No
         caveats.append("Pricing data is illustrative; verify against provider pricing pages.")
     if any(m.metrics.source == "benchmark" and m.metrics.n_samples < 100 for m in feasible):
         caveats.append("Benchmarks used fewer than 100 samples per model; P95 latency and small quality gaps are noisy.")
+    for m in feasible:
+        tr = m.metrics.truncated_rate
+        if tr is not None and tr >= 0.10:
+            caveats.append(f"{m.id}: {tr:.0%} of its answers were cut off at the {m.metrics.max_tokens or 'configured'}-token limit, "
+                           "so its quality figure partly reflects truncation rather than extraction ability.")
     if any(m.free_tier for m in feasible):
         caveats.append("Some metrics were measured on a rate-limited free tier and may not reflect production.")
     if not ranked:

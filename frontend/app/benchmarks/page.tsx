@@ -29,16 +29,19 @@ export default function BenchmarksPage() {
             This page never fills the gap with made-up numbers.</p></Card>
         ) : (
           <Card title="Models">
-            <Table head={["Model", "Samples", "Quality (strict)", "English", "Hindi", "Lenient", "P95 latency", "Reliability"]}>
+            <Table head={["Model", "Samples", "Quality (strict)", "English", "Hindi", "Lenient", "P95 latency", "Reliability", "Cut off at token limit"]}>
               {data.models.map((m) => (
                 <tr key={m.id}>
                   <td className="font-medium">{m.id} {m.free_tier && <Badge tone="amber">free tier</Badge>}</td>
                   <td>{m.metrics.n_samples}</td><td>{pct(m.metrics.quality)}</td>
                   <td>{pct(m.metrics.quality_by_language.en)}</td><td>{pct(m.metrics.quality_by_language.hi)}</td>
                   <td>{pct(m.metrics.quality_lenient)}</td><td>{ms(m.metrics.latency_p95_ms)}</td><td>{pct(m.metrics.reliability)}</td>
+                  <td>{m.metrics.truncated_rate != null && m.metrics.truncated_rate >= 0.1
+                    ? <Badge tone="amber">{pct(m.metrics.truncated_rate, 0)} of answers (limit {m.metrics.max_tokens ?? "?"} tokens)</Badge>
+                    : <span className="text-slate-400">{pct(m.metrics.truncated_rate, 0)}</span>}</td>
                 </tr>))}
             </Table>
-            <p className="mt-2 text-xs text-slate-500">P95 from tens of samples is noisy. Free-tier models were measured on shared, rate-limited capacity.</p>
+            <p className="mt-2 text-xs text-slate-500">P95 from tens of samples is noisy. Free-tier models were measured on shared, rate-limited capacity. “Cut off” means the answer hit the token limit before finishing (typical of models that think at length first), so a low quality score there partly reflects the limit, not extraction ability.</p>
           </Card>)}
         {data.ignored_runs.length > 0 && (
           <Card title="Runs not used, and why">

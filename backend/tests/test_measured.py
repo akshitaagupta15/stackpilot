@@ -19,7 +19,7 @@ def profile(slug, **kw):
     return p
 
 
-def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, n=None, ts=None, sha=None):
+def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, n=None, ts=None, sha=None, truncate=0):
     items = ITEMS[:n] if n else ITEMS
     state = {"i": 0}
 
@@ -28,6 +28,9 @@ def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, 
         state["i"] += 1
         if state["i"] <= fail_first:
             return {"text": "", "error": "HTTP 429: busy", "latency_ms": 50.0, "input_tokens": None, "output_tokens": None}
+        if state["i"] <= fail_first + truncate:
+            return {"text": "Thinking Process: 1. Analyze the request", "error": None, "latency_ms": 100.0 + state["i"],
+                    "input_tokens": 100, "output_tokens": 800, "finish_reason": "length"}
         exp = dict(it["expected"])
         if hi_wrong and it["language"] == "hi":
             exp["total_amount"] = 1.0
@@ -116,3 +119,18 @@ def test_api_endpoints(tmp_path, monkeypatch):
     assert c.get("/measured/catalog").json()["models"][0]["id"] == "a/m"
     res = c.post("/measured/recommend", json=body)
     assert res.status_code == 200 and res.json()["picks"]["best_overall"] == "a/m"
+
+
+def test_truncation_is_measured_and_called_out(tmp_path):
+    r = tmp_path / "r"
+    make_run(r, "a/m", truncate=36)                              # 36 of 40 answers cut off at the token limit
+    models, _ = load_measured_catalog(r, profiles_file(tmp_path, profile("a/m")))
+    m = models[0].metrics
+    assert m.truncated_rate == 0.9 and m.max_tokens == 400 and m.quality == pytest.approx(0.1)
+    rec = recommend(Workload(name="x", monthly_requests=1000, avg_input_tokens=500, avg_output_tokens=100), models)
+    assert any("90% of its answers were cut off at the 400-token limit" in c for c in rec.caveats)
+    make_run(tmp_path / "r2", "a/ok")                            # a clean run raises no such caveat
+    ok, _ = load_measured_catalog(tmp_path / "r2", profiles_file(tmp_path, profile("a/ok")))
+    assert ok[0].metrics.truncated_rate == 0.0
+    assert not any("cut off" in c for c in recommend(Workload(name="x", monthly_requests=1000, avg_input_tokens=500,
+                                                              avg_output_tokens=100), ok).caveats)

@@ -30,3 +30,21 @@ def test_other_errors_not_retried():
     caller, calls = make([{**RL, "error": "HTTP 401: bad key"}])
     res = with_retries(caller, retries=5, wait=0, sleep=lambda s: None)("m", [])
     assert calls["n"] == 1 and res["retries"] == 0
+
+
+def test_daily_limit_is_never_retried_and_aborts():
+    import pytest
+    from app.benchmark.run import DailyLimitReached
+    daily = {**RL, "error": 'HTTP 429: {"error":{"message":"Rate limit exceeded: free-models-per-day. Add 10 credits"}}'}
+    caller, calls = make([daily, OK])
+    with pytest.raises(DailyLimitReached):
+        with_retries(caller, retries=5, wait=0, sleep=lambda s: None)("m", [])
+    assert calls["n"] == 1
+
+
+def test_retry_budget_is_shared_across_the_whole_run():
+    caller, calls = make([RL])                      # always rate-limited
+    wrapped = with_retries(caller, retries=3, wait=0, sleep=lambda s: None, budget=4)
+    results = [wrapped("m", []) for _ in range(3)]
+    assert [r["retries"] for r in results] == [3, 1, 0]   # 4 retries in total, then none
+    assert calls["n"] == 3 + 4                             # 3 first attempts + exactly the budgeted retries

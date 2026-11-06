@@ -10,6 +10,8 @@ class Metrics(BaseModel):
     n_samples: int = 0                                  # successful requests behind the numbers
     quality_lenient: Optional[float] = None             # counts JSON found inside extra text
     quality_by_language: dict[str, float] = {}
+    truncated_rate: Optional[float] = None              # share of answers cut off by the max_tokens limit
+    max_tokens: Optional[int] = None                    # the limit used in the benchmark run
 
 
 class ModelSpec(BaseModel):

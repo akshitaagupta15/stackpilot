@@ -20,7 +20,8 @@ export type CostEstimate = {
 export type MeasuredModel = {
   id: string; provider: string; name: string; free_tier: boolean; source_run: string | null;
   metrics: { quality: number; quality_lenient: number | null; quality_by_language: Record<string, number>;
-             latency_p95_ms: number; reliability: number; n_samples: number };
+             latency_p95_ms: number; reliability: number; n_samples: number;
+             truncated_rate: number | null; max_tokens: number | null };
 };
 export type Attempt = { model: string; status: "ok" | "failed" | "skipped"; detail?: string; latency_ms?: number | null };
 export type GatewayResult = {

@@ -39,6 +39,8 @@ def metrics_from_run(run: dict) -> Metrics | None:
     return Metrics(quality=round(mean(_strict(i) for i in ok), 4), latency_p95_ms=p95,
                    reliability=run["summary"]["reliability"]["success_rate"], source="benchmark",
                    n_samples=len(ok), quality_by_language=by_lang,
+                   truncated_rate=round(sum(1 for i in ok if i.get("finish_reason") == "length") / len(ok), 4),
+                   max_tokens=(run.get("settings") or {}).get("max_tokens"),
                    quality_lenient=round(mean(i["score"]["field_accuracy"] for i in ok), 4))
 
 

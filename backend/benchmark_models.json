@@ -1,5 +1,11 @@
+
 {
   "models": [
-    {"slug": "xingchen-agi/xing4.0-29b-a4b:free", "price_input_per_mtok": 0, "price_output_per_mtok": 0, "pricing_checked_on": "2026-10-27"}
+    {
+      "slug": "nvidia/nemotron-3.5-lightning:free",
+      "price_input_per_mtok": 0,
+      "price_output_per_mtok": 0,
+      "pricing_checked_on": "2026-11-02"
+    }
   ]
 }

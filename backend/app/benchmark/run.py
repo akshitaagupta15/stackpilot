@@ -42,17 +42,27 @@ def select_items(items: list[dict], limit: int | None = None, every: int | None 
     return items[:limit] if limit else items
 
 
-def with_retries(caller, retries: int, wait: float, sleep=time.sleep):
+class DailyLimitReached(Exception):
+    """The provider's per-day free quota is used up. Retrying cannot help and only burns more requests."""
+
+
+def with_retries(caller, retries: int, wait: float, sleep=time.sleep, budget: int | None = None):
     """Retry only rate-limit errors (429). Latency reported is that of the final attempt, not the waiting.
     NOTE: every attempt may count against a free-tier daily quota."""
+    used = {"n": 0}   # retries spent so far across the WHOLE run; `budget` caps it (keeps free-tier runs under the daily limit)
+
     def wrapped(slug, msgs):
         attempts = 0
         while True:
             res = dict(caller(slug, msgs))
             res["retries"] = attempts
             err = res.get("error") or ""
-            if err and ("429" in err or "rate-limited" in err) and attempts < retries:
+            if "free-models-per-day" in err:
+                raise DailyLimitReached(err)
+            if err and ("429" in err or "rate-limited" in err) and attempts < retries \
+                    and (budget is None or used["n"] < budget):
                 attempts += 1
+                used["n"] += 1
                 sleep(wait)
                 continue
             return res
@@ -68,6 +78,8 @@ def main() -> int:
     ap.add_argument("--max-tokens", type=int, default=400, help="cap on tokens the model may write")
     ap.add_argument("--timeout", type=float, default=60.0, help="seconds before a request counts as failed")
     ap.add_argument("--retries", type=int, default=0, help="retry rate-limited (429) requests this many times")
+    ap.add_argument("--retry-budget", type=int, default=None,
+                    help="max retries across the whole run, e.g. 8, so 40 invoices never need more than 48 requests")
     ap.add_argument("--retry-wait", type=float, default=20.0, help="seconds to wait before each retry")
     ap.add_argument("--dry-run", action="store_true", help="simulate model replies; no key needed")
     ap.add_argument("--note", default="", help="e.g. 'run from Meerut, India on home wifi'")
@@ -91,13 +103,20 @@ def main() -> int:
             if a.delay:
                 time.sleep(a.delay)
             return call_model(client, key, slug, msgs, max_tokens=a.max_tokens, timeout=a.timeout)
-        caller = with_retries(caller, a.retries, a.retry_wait)
+        caller = with_retries(caller, a.retries, a.retry_wait, budget=a.retry_budget)
 
     for m in models:
         print(f"\n>>> {m['slug']}  ({len(items)} items){'  [DRY RUN - fake data]' if a.dry_run else ''}")
-        run = run_benchmark(m, caller, items, "invoices_v1.jsonl", sha, a.note, a.dry_run,
-                            progress=lambda n, t: print(f"    {n}/{t}", end="\r"),
-                            settings={"temperature": 0.0, "max_tokens": a.max_tokens, "timeout_s": a.timeout})
+        try:
+            run = run_benchmark(m, caller, items, "invoices_v1.jsonl", sha, a.note, a.dry_run,
+                                progress=lambda n, t: print(f"    {n}/{t}", end="\r"),
+                                settings={"temperature": 0.0, "max_tokens": a.max_tokens, "timeout_s": a.timeout})
+        except DailyLimitReached:
+            print("\nStopped: your OpenRouter free daily limit (free-models-per-day) is used up. Nothing was saved.\n"
+                  "Try again after the limit resets, or add credits at openrouter.ai to raise it.")
+            if client:
+                client.close()
+            return 2
         path = save_run(run, Path(a.out))
         s = run["summary"]
         q = s["quality"]["overall"]

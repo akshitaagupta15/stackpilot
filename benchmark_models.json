@@ -1,0 +1,10 @@
+{
+  "models": [
+    {
+      "slug": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "price_input_per_mtok": 0,
+      "price_output_per_mtok": 0,
+      "pricing_checked_on": "2026-11-06"
+    }
+  ]
+}

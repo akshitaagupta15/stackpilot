@@ -1,0 +1,228 @@
+{
+  "run_id": "666b5c866f15",
+  "timestamp_utc": "2026-11-02T15:47:28.320049+00:00",
+  "dry_run": false,
+  "runner_version": "0.1",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "pricing": {
+    "input_per_mtok": 0,
+    "output_per_mtok": 0,
+    "checked_on": "2026-11-02"
+  },
+  "dataset": {
+    "name": "invoices_v1.jsonl",
+    "sha256": "c7be4b8b3b9aae0831068cfa3898b76c452f0051d350911bf234aea3790caaff",
+    "n": 5
+  },
+  "prompt_version": "extract_v2",
+  "settings": {
+    "temperature": 0.0,
+    "max_tokens": 3000,
+    "timeout_s": 180.0
+  },
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "note": "India, home wifi"
+  },
+  "summary": {
+    "quality": {
+      "overall": {
+        "n": 5,
+        "json_valid_rate": 1,
+        "clean_json_rate": 1,
+        "field_accuracy": 1.0,
+        "exact_match_rate": 1,
+        "per_field": {
+          "invoice_number": 1,
+          "invoice_date": 1,
+          "vendor_name": 1,
+          "total_amount": 1,
+          "currency": 1
+        }
+      },
+      "en": {
+        "n": 3,
+        "json_valid_rate": 1,
+        "clean_json_rate": 1,
+        "field_accuracy": 1.0,
+        "exact_match_rate": 1,
+        "per_field": {
+          "invoice_number": 1,
+          "invoice_date": 1,
+          "vendor_name": 1,
+          "total_amount": 1,
+          "currency": 1
+        }
+      },
+      "hi": {
+        "n": 2,
+        "json_valid_rate": 1,
+        "clean_json_rate": 1,
+        "field_accuracy": 1.0,
+        "exact_match_rate": 1,
+        "per_field": {
+          "invoice_number": 1,
+          "invoice_date": 1,
+          "vendor_name": 1,
+          "total_amount": 1,
+          "currency": 1
+        }
+      }
+    },
+    "reliability": {
+      "success_rate": 1.0,
+      "failures": 0,
+      "truncated": 0,
+      "retries": 0,
+      "errors": []
+    },
+    "latency_ms": {
+      "p50": 13896.9,
+      "p95": 23739.3,
+      "p99": 23739.3,
+      "mean": 14828.9,
+      "n": 5
+    },
+    "tokens": {
+      "avg_input": 260.4,
+      "avg_output": 949
+    },
+    "cost_usd": {
+      "avg_per_request": 0.0,
+      "total": 0.0
+    },
+    "for_catalog": {
+      "quality": 1.0,
+      "latency_p95_ms": 23739.3,
+      "reliability": 1.0
+    }
+  },
+  "items": [
+    {
+      "id": "en-01",
+      "language": "en",
+      "raw_output": "{\n  \"invoice_number\": \"INV-2024-0509\",\n  \"invoice_date\": \"2025-04-08\",\n  \"vendor_name\": \"Bright Office Supplies\",\n  \"total_amount\": 39130.13,\n  \"currency\": \"USD\"\n}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 15127.0,
+      "input_tokens": 237,
+      "output_tokens": 874,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-09",
+      "language": "en",
+      "raw_output": "{\n  \"invoice_number\": \"INV-2024-5413\",\n  \"invoice_date\": \"2024-04-27\",\n  \"vendor_name\": \"Apex Cloud Services\",\n  \"total_amount\": 10383.27,\n  \"currency\": \"INR\"\n}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 9087.1,
+      "input_tokens": 261,
+      "output_tokens": 723,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "en-17",
+      "language": "en",
+      "raw_output": "{\n  \"invoice_number\": \"INV-2024-4046\",\n  \"invoice_date\": \"2024-02-24\",\n  \"vendor_name\": \"Bright Office Supplies\",\n  \"total_amount\": 134099.7,\n  \"currency\": \"USD\"\n}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 13896.9,
+      "input_tokens": 257,
+      "output_tokens": 1122,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "hi-05",
+      "language": "hi",
+      "raw_output": "{\n  \"invoice_number\": \"INV-2025-7679\",\n  \"invoice_date\": \"2024-02-15\",\n  \"vendor_name\": \"मेट्रो प्रिंट हाउस\",\n  \"total_amount\": 238547.79,\n  \"currency\": \"INR\"\n}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 23739.3,
+      "input_tokens": 282,
+      "output_tokens": 970,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    },
+    {
+      "id": "hi-13",
+      "language": "hi",
+      "raw_output": "{\"invoice_number\": \"INV-2024-0252\", \"invoice_date\": \"2025-10-19\", \"vendor_name\": \"ग्रीन वैली फूड्स\", \"total_amount\": 293852.13, \"currency\": \"INR\"}",
+      "error": null,
+      "finish_reason": "stop",
+      "retries": 0,
+      "latency_ms": 12294.0,
+      "input_tokens": 265,
+      "output_tokens": 1056,
+      "cost_usd": 0.0,
+      "score": {
+        "json_valid": true,
+        "clean_json": true,
+        "fields": {
+          "invoice_number": true,
+          "invoice_date": true,
+          "vendor_name": true,
+          "total_amount": true,
+          "currency": true
+        },
+        "field_accuracy": 1.0,
+        "exact_match": true
+      }
+    }
+  ]
+}
