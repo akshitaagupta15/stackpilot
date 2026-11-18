@@ -19,7 +19,7 @@ def profile(slug, **kw):
     return p
 
 
-def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, n=None, ts=None, sha=None, truncate=0):
+def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, n=None, ts=None, sha=None, truncate=0, prompt=None):
     items = ITEMS[:n] if n else ITEMS
     state = {"i": 0}
 
@@ -41,6 +41,8 @@ def make_run(runs, slug, fail_first=0, hi_wrong=False, fenced=False, dry=False, 
     run = run_benchmark(cfg, caller, items, "invoices_v1.jsonl", sha or SHA, dry_run=dry)
     if ts:
         run["timestamp_utc"] = ts
+    if prompt:
+        run["prompt_version"] = prompt
     return save_run(run, runs)
 
 
@@ -129,8 +131,25 @@ def test_truncation_is_measured_and_called_out(tmp_path):
     assert m.truncated_rate == 0.9 and m.max_tokens == 400 and m.quality == pytest.approx(0.1)
     rec = recommend(Workload(name="x", monthly_requests=1000, avg_input_tokens=500, avg_output_tokens=100), models)
     assert any("90% of its answers were cut off at the 400-token limit" in c for c in rec.caveats)
+    assert m.avg_output_tokens == pytest.approx((36 * 800 + 4 * 50) / 40)
+    assert any("output tokens per request" in c and "cost may be higher" in c for c in rec.caveats)
     make_run(tmp_path / "r2", "a/ok")                            # a clean run raises no such caveat
     ok, _ = load_measured_catalog(tmp_path / "r2", profiles_file(tmp_path, profile("a/ok")))
     assert ok[0].metrics.truncated_rate == 0.0
-    assert not any("cut off" in c for c in recommend(Workload(name="x", monthly_requests=1000, avg_input_tokens=500,
-                                                              avg_output_tokens=100), ok).caveats)
+    clean_caveats = recommend(Workload(name="x", monthly_requests=1000, avg_input_tokens=500, avg_output_tokens=100), ok).caveats
+    assert not any("cut off" in c or "output tokens per request" in c for c in clean_caveats)
+
+
+def test_mixed_prompt_versions_are_flagged_but_matching_ones_are_not(tmp_path):
+    wl = Workload(name="x", monthly_requests=1000, avg_input_tokens=500, avg_output_tokens=300)
+    mixed = tmp_path / "mixed"
+    make_run(mixed, "a/one", prompt="extract_v1")
+    make_run(mixed, "b/two", prompt="extract_v2")
+    models, _ = load_measured_catalog(mixed, profiles_file(tmp_path, profile("a/one"), profile("b/two")))
+    assert models[0].metrics.prompt_version in ("extract_v1", "extract_v2")
+    assert any("different prompt versions (extract_v1, extract_v2)" in c for c in recommend(wl, models).caveats)
+    same = tmp_path / "same"
+    make_run(same, "a/one", prompt="extract_v2")
+    make_run(same, "b/two", prompt="extract_v2")
+    ok, _ = load_measured_catalog(same, profiles_file(tmp_path, profile("a/one"), profile("b/two")))
+    assert not any("prompt versions" in c for c in recommend(wl, ok).caveats)

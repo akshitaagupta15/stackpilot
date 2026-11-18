@@ -12,6 +12,8 @@ class Metrics(BaseModel):
     quality_by_language: dict[str, float] = {}
     truncated_rate: Optional[float] = None              # share of answers cut off by the max_tokens limit
     max_tokens: Optional[int] = None                    # the limit used in the benchmark run
+    avg_output_tokens: Optional[float] = None           # per answered request, including any hidden reasoning
+    prompt_version: Optional[str] = None                # which benchmark prompt produced these numbers
 
 
 class ModelSpec(BaseModel):

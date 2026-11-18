@@ -93,6 +93,15 @@ def recommend(w: Workload, models: list[ModelSpec], weights: Weights | None = No
         if tr is not None and tr >= 0.10:
             caveats.append(f"{m.id}: {tr:.0%} of its answers were cut off at the {m.metrics.max_tokens or 'configured'}-token limit, "
                            "so its quality figure partly reflects truncation rather than extraction ability.")
+    for m in feasible:
+        ao = m.metrics.avg_output_tokens
+        if ao is not None and ao > 2 * w.avg_output_tokens:
+            caveats.append(f"{m.id}: produced about {ao:.0f} output tokens per request in the benchmark (including any hidden reasoning), "
+                           f"far above the {w.avg_output_tokens} you assumed, so its real cost may be higher than estimated.")
+    versions = sorted({m.metrics.prompt_version for m in feasible if m.metrics.source == "benchmark" and m.metrics.prompt_version})
+    if len(versions) > 1:
+        caveats.append("Measured models were benchmarked with different prompt versions (" + ", ".join(versions) +
+                       "), so their quality numbers are not directly comparable.")
     if any(m.free_tier for m in feasible):
         caveats.append("Some metrics were measured on a rate-limited free tier and may not reflect production.")
     if not ranked:

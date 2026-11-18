@@ -40,7 +40,8 @@ def metrics_from_run(run: dict) -> Metrics | None:
                    reliability=run["summary"]["reliability"]["success_rate"], source="benchmark",
                    n_samples=len(ok), quality_by_language=by_lang,
                    truncated_rate=round(sum(1 for i in ok if i.get("finish_reason") == "length") / len(ok), 4),
-                   max_tokens=(run.get("settings") or {}).get("max_tokens"),
+                   max_tokens=(run.get("settings") or {}).get("max_tokens"), prompt_version=run.get("prompt_version"),
+                   avg_output_tokens=(round(mean(t), 1) if (t := [i["output_tokens"] for i in ok if i.get("output_tokens") is not None]) else None),
                    quality_lenient=round(mean(i["score"]["field_accuracy"] for i in ok), 4))
 
 
